@@ -10,7 +10,6 @@ const port = process.env.PORT || 5000;
 // Konfigurasi CORS (sesuai domain frontend yang kamu punya)
 const corsOptions = {
   origin: [
-    "",
     "http://localhost:3000",
   ],
   credentials: true, // Mengizinkan cookie dikirim
