@@ -11,6 +11,7 @@ const port = process.env.PORT || 5000;
 const corsOptions = {
   origin: [
     "http://localhost:3000",
+    "https://tcc-kelompok9-fe-dot-f-09-451908.uc.r.appspot.com",
   ],
   credentials: true, // Mengizinkan cookie dikirim
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
