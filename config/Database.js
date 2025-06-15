@@ -8,11 +8,10 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_HOST = process.env.DB_HOST;
 
 // PostgreSQL Database Configuration
-const PG_DB_NAME = process.env._PG_DB_NAME;
-const PG_DB_USERNAME = process.env._PG_DB_USERNAME;
-const PG_DB_PASSWORD = process.env._PG_DB_PASSWORD;
-const PG_DB_HOST = process.env._PG_DB_HOST;
-
+const PG_DB_NAME = process.env.PG_DB_NAME;
+const PG_DB_USERNAME = process.env.PG_DB_USERNAME;
+const PG_DB_PASSWORD = process.env.PG_DB_PASSWORD;
+const PG_DB_HOST = process.env.PG_DB_HOST;
 
 // MySQL Connection (untuk operasional utama)
 const db = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
