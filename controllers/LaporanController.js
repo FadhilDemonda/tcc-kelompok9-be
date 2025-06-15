@@ -2,6 +2,7 @@
 import Laporan from "../models/LaporanModel.js";
 import Users from "../models/UserModel.js";
 import { Op } from "sequelize";
+import LaporanSummary from "../models/LaporanSummaryModel.js";  // ✅ PostgreSQL
 
 // GET - Mendapatkan semua laporan
 export const getAllLaporan = async (req, res) => {
@@ -186,8 +187,42 @@ export const updateLaporan = async (req, res) => {
     if (updateData.status === 'selesai' && laporan.status !== 'selesai') {
       updateData.tanggal_selesai = new Date();
     }
-
     await laporan.update(updateData);
+
+
+    // 🧠 Mapping nilai status & prioritas dari MySQL ke PostgreSQL
+    const statusPg = updateData.status === 'selesai' ? 'completed'
+    : updateData.status === 'proses' ? 'progress'
+    : updateData.status;
+
+
+    const prioritasPg = laporan.prioritas === 'sedang' ? 'medium'
+                       : laporan.prioritas === 'rendah' ? 'low'
+                       : laporan.prioritas === 'tinggi' ? 'high'
+                       : laporan.prioritas;
+
+    // Simpan ke PostgreSQL jika status selesai
+    if (updateData.status === 'selesai') {
+      const result = await LaporanSummary.upsert({
+        laporan_id: laporan.id,
+        judul: laporan.judul || 'Tanpa Judul',
+        lokasi: laporan.lokasi || '-',
+        kategori: laporan.kategori || '-',
+        pelapor: laporan.pelapor_id?.toString() || 'user',
+        teknisi: laporan.teknisi || null,
+        status: statusPg,         // ✅ pakai hasil mapping
+        prioritas: prioritasPg,   // ✅ pakai hasil mapping
+        biaya: laporan.biaya || 0,
+        tanggal_lapor: laporan.tanggal_lapor || new Date(),
+        tanggal_selesai: new Date(),
+        lama_penyelesaian_hari: Math.ceil(
+          (new Date() - new Date(laporan.tanggal_lapor)) / (1000 * 60 * 60 * 24)
+        )
+        
+      });
+
+      console.log("✅ Disimpan ke PostgreSQL:", result);
+    }
 
     // Ambil data terbaru dengan relasi
     const updatedLaporan = await Laporan.findByPk(id, {
@@ -204,6 +239,8 @@ export const updateLaporan = async (req, res) => {
       data: updatedLaporan
     });
   } catch (error) {
+    console.error("🔥 ERROR di updateLaporan:", error.message);
+    console.error(error);
     res.status(500).json({
       success: false,
       message: "Gagal mengupdate laporan",
@@ -211,6 +248,7 @@ export const updateLaporan = async (req, res) => {
     });
   }
 };
+
 
 // DELETE - Hapus laporan
 export const deleteLaporan = async (req, res) => {
@@ -387,4 +425,9 @@ export const getDashboardStats = async (req, res) => {
       error: error.message
     });
   }
+  console.log("Status yang dikirim admin:", updateData.status);
+
+  // Jika statusnya selesai, simpan ke PostgreSQL
+
+
 };
