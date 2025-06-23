@@ -12,8 +12,8 @@ const corsOptions = {
   origin: [
     "http://localhost:3000",
     "https://tcc-kelompok9-fe-dot-f-09-451908.uc.r.appspot.com",
-    "http://104.154.225.216"  // 👈 tambahkan ini!
-
+    "http://104.154.225.216" , // 👈 tambahkan ini!
+    "http://34.135.59.8"  // 👈 tambahkan ini!
   ],
   credentials: true, // Mengizinkan cookie dikirim
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
